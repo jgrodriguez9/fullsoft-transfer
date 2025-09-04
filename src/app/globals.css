@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* Turquesa (Turquoise) scale */
+  --color-primary: oklch(0.7 0.15 180); /* main brand shade */
+  --color-primary-50: oklch(0.97 0.02 180);
+  --color-primary-100: oklch(0.94 0.04 180);
+  --color-primary-200: oklch(0.88 0.07 180);
+  --color-primary-300: oklch(0.82 0.1 180);
+  --color-primary-400: oklch(0.75 0.13 180);
+  --color-primary-500: oklch(0.7 0.15 180); /* main brand shade */
+  --color-primary-600: oklch(0.63 0.15 180);
+  --color-primary-700: oklch(0.55 0.14 180);
+  --color-primary-800: oklch(0.48 0.12 180);
+  --color-primary-900: oklch(0.4 0.1 180);
+  --color-primary-950: oklch(0.3 0.08 180);
+
+  --color-primary-foreground: white;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+.react-datepicker__input-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.react-datepicker__header {
+  @apply bg-white border-0 p-0;
+}
+.react-datepicker__day-name {
+  @apply text-[#949494] m-2;
+}
+.react-datepicker__day {
+  @apply text-[#0D0D0D] m-2;
+}
+.react-datepicker__day--disabled {
+  @apply text-gray-400 m-2;
+}
+.react-datepicker__day--in-range {
+  @apply bg-blue-400;
+}
+.react-datepicker__day--range-start,
+.react-datepicker__day--range-end {
+  @apply bg-[#216ba5];
+}
