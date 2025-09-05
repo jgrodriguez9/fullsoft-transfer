@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
+import Header from "@/components/common/Header";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
+            <Header />
             {children}
           </QueryClientProvider>
         </Provider>

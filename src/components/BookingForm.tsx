@@ -13,9 +13,10 @@ import ComboBoxController from "./controllers/SelectSimpleController";
 import DropdownPassengers from "./controllers/DropdownPassenger";
 import { Paxes } from "./controllers/dropdown/types";
 import { getZones } from "@/services/zone";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { timeOptions } from "@/constant/time";
 import { useRouter } from "next/navigation";
+import { de } from "zod/v4/locales";
 
 // Reusable schema for a zone reference
 const zoneSchema = z.object({
@@ -46,18 +47,24 @@ export type TransferFormData = z.infer<typeof transferSchema>;
 
 interface Props {
   className?: string;
+  defaultInitial?: any;
 }
 
 export const BookingForm: React.FC<Props> = ({
   className = "bg-white p-6 rounded-lg shadow-lg max-w-2xl",
+  defaultInitial = undefined,
 }) => {
   const router = useRouter();
 
-  const [paxes, setPaxes] = React.useState<Paxes>({
-    adults: 1,
-    children: 0,
-    infant: 0,
-  });
+  const [paxes, setPaxes] = React.useState<Paxes>(
+    defaultInitial
+      ? defaultInitial.paxes
+      : {
+          adults: 1,
+          children: 0,
+          infant: 0,
+        }
+  );
 
   const onSubmit = async (values: TransferFormData) => {
     const data: Record<string, unknown> = {};
@@ -80,14 +87,14 @@ export const BookingForm: React.FC<Props> = ({
     resolver: zodResolver(transferSchema),
     defaultValues: {
       originZoneId: {
-        _id: "",
+        _id: defaultInitial?.originZoneId?._id || "",
       },
       destinationZoneId: {
-        _id: "",
+        _id: defaultInitial?.destinationZoneId?._id || "",
       },
-      date: new Date(),
-      hour: "10:30 AM",
-      paxes: {
+      date: defaultInitial?.date ? parseISO(defaultInitial.date) : new Date(),
+      hour: defaultInitial?.hour ?? "10:30 AM",
+      paxes: defaultInitial?.paxes || {
         adults: 1,
         children: 0,
         infant: 0,
@@ -104,7 +111,14 @@ export const BookingForm: React.FC<Props> = ({
             control={control}
             fnFilter={getZones}
             query={"page=1&max=10"}
-            value={null}
+            value={
+              defaultInitial?.originZoneId
+                ? {
+                    value: defaultInitial.originZoneId._id,
+                    label: defaultInitial.originZoneId.name,
+                  }
+                : null
+            }
             error={errors.originZoneId?._id?.message}
           />
         </div>
@@ -116,7 +130,14 @@ export const BookingForm: React.FC<Props> = ({
             fnFilter={getZones}
             query={"page=1&max=10"}
             error={errors.destinationZoneId?._id?.message}
-            value={null}
+            value={
+              defaultInitial?.originZoneId
+                ? {
+                    value: defaultInitial.destinationZoneId._id,
+                    label: defaultInitial.destinationZoneId.name,
+                  }
+                : null
+            }
           />
         </div>
         <div className="grid-cols-1 md:col-span-2">
