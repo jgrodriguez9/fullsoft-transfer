@@ -5,7 +5,7 @@ import ComboBoxController from "@/components/controllers/SelectSimpleController"
 import TransferCard from "@/components/transfers/TransferCard";
 import { useDecodedSearchParams } from "@/hooks/useDecodedSearchParams";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Checkbox } from "@radix-ui/react-checkbox";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -21,6 +21,7 @@ export type OrderData = z.infer<typeof orderSchema>;
 
 const SearchPage: React.FC = () => {
   const searchParams = useDecodedSearchParams();
+  const router = useRouter();
 
   const { control } = useForm<OrderData>({
     resolver: zodResolver(orderSchema),
@@ -30,6 +31,15 @@ const SearchPage: React.FC = () => {
       sharedTransfer: false,
     },
   });
+
+  const handleClickCard = () => {
+    console.log("Card clicked");
+    console.log(searchParams);
+    const params = new URLSearchParams({
+      booking: JSON.stringify(searchParams.booking),
+    });
+    router.push(`/book?${params.toString()}`);
+  };
 
   return (
     <div className="relative h-screen">
@@ -69,8 +79,8 @@ const SearchPage: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <TransferCard />
-              <TransferCard />
+              <TransferCard handleClickCard={handleClickCard} />
+              <TransferCard handleClickCard={handleClickCard} />
             </div>
           </div>
         </div>

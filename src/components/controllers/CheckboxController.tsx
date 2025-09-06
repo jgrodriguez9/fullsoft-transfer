@@ -1,7 +1,5 @@
-import DatePicker from "react-datepicker";
 import { Label } from "../ui/Label";
 import { useController } from "react-hook-form";
-import { Calendar } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 
 interface Props {

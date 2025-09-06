@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
 import Header from "@/components/common/Header";
+import { Toaster } from "sonner";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,12 @@ export default function RootLayout({
           <QueryClientProvider client={queryClient}>
             <Header />
             {children}
+            <Toaster
+              richColors
+              position="top-center"
+              theme="light"
+              closeButton
+            />
           </QueryClientProvider>
         </Provider>
       </body>
