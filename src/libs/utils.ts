@@ -42,7 +42,7 @@ export const createSearchParams = <T extends object>(
   return searchParams;
 };
 
-const extractMeaningfulMessage = (error: any, message: string) => {
+export const extractMeaningfulMessage = (error: any, message: string) => {
   if (!error) return message;
   let returnMessage = message;
   returnMessage = error.data?.message;
@@ -74,4 +74,7 @@ const extractMeaningfulMessage = (error: any, message: string) => {
   return returnMessage;
 };
 
-export default extractMeaningfulMessage;
+export const sumTotalFromObject = <T extends object>(items: T): number => {
+  const total = Object.values(items).reduce((sum, count) => sum + count, 0);
+  return total;
+};

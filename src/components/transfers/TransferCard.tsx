@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useState } from "react";
 import Modal from "../common/Modal";
 import { Button } from "../ui/button";
+import { VehicleDTO } from "@/types/transfer";
+import formatNumber from "@/libs/formatNumber";
 
 const policies = [
   "La cancelación parcial no está disponible para traslados de ida y vuelta.",
@@ -13,10 +15,14 @@ const policies = [
 ];
 
 interface TransferCardProps {
-  handleClickCard: () => void;
+  handleClickCard: (vehicleSelected: VehicleDTO) => void;
+  vehicle: VehicleDTO;
 }
 
-export default function TransferCard({ handleClickCard }: TransferCardProps) {
+export default function TransferCard({
+  handleClickCard,
+  vehicle,
+}: TransferCardProps) {
   const [open, setOpen] = useState(false);
   const handleClick = () => {
     // Aquí puedes manejar la lógica al hacer clic en la tarjeta
@@ -28,15 +34,15 @@ export default function TransferCard({ handleClickCard }: TransferCardProps) {
     <>
       <div
         className="rounded-xl border border-gray-200 bg-background p-2  md:flex md:gap-6 cursor-pointer"
-        onClick={() => handleClick()}
+        onClick={handleClick}
       >
         {/* Vehicle Image */}
         <div className="relative h-32 w-full md:h-40 md:w-48">
           <Image
-            src="/car1.jpg"
-            alt="Traslado exprés van"
+            src={vehicle.image}
+            alt={vehicle.name}
             fill
-            className="object-cover rounded-lg"
+            className="object-contain rounded-lg"
           />
         </div>
 
@@ -45,12 +51,12 @@ export default function TransferCard({ handleClickCard }: TransferCardProps) {
           <div className="flex flex-col justify-between min-h-40">
             <div className="flex flex-col">
               <h2 className="mb-1 text-lg font-semibold tracking-tight">
-                Traslado exprés
+                {vehicle.name}
               </h2>
               <ul className="mb-4 flex gap-6 items-center text-gray-700">
                 <li className="flex gap-1 items-center">
                   <User className="size-5 " />
-                  <span className="text-sm">10</span>
+                  <span className="text-sm">{vehicle.capacity}</span>
                 </li>
                 <li className="flex gap-1 items-center">
                   <Briefcase className="size-5" />
@@ -66,10 +72,12 @@ export default function TransferCard({ handleClickCard }: TransferCardProps) {
                 <span className="text-xs text-muted-foreground">
                   Precio por persona
                 </span>
-                <span className="text-lg text-muted-foreground mr-2">$22</span>
-                <span className="text-xs text-muted-foreground">
-                  ida y vuelta
+                <span className="text-lg text-muted-foreground mr-2">
+                  {formatNumber(vehicle.price)}
                 </span>
+                {/* <span className="text-xs text-muted-foreground">
+                  ida y vuelta
+                </span> */}
               </div>
             </div>
           </div>
@@ -92,7 +100,7 @@ export default function TransferCard({ handleClickCard }: TransferCardProps) {
               // Aquí puedes manejar la lógica de reserva
               console.log("Reservar traslado");
               setOpen(false);
-              handleClickCard();
+              handleClickCard(vehicle);
             }}
           >
             Reservar

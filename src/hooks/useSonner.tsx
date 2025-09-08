@@ -1,5 +1,5 @@
 import { ERROR_SERVER } from "@/constant/messages";
-import extractMeaningfulMessage from "@/libs/utils";
+import { extractMeaningfulMessage } from "@/libs/utils";
 import { useCallback, useMemo } from "react";
 import { toast } from "sonner";
 

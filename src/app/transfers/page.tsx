@@ -3,9 +3,15 @@ import { BookingForm } from "@/components/BookingForm";
 import { CheckboxController } from "@/components/controllers/CheckboxController";
 import ComboBoxController from "@/components/controllers/SelectSimpleController";
 import TransferCard from "@/components/transfers/TransferCard";
+import { Spinner } from "@/components/ui/spinner";
+import useGetAvailablesTranfers from "@/hooks/query/useGetAvailablesTranfers";
 import { useDecodedSearchParams } from "@/hooks/useDecodedSearchParams";
+import useParseObjectToQueryUrl from "@/hooks/useParseObjectToQueryUrl";
+import { sumTotalFromObject } from "@/libs/utils";
+import { VehicleDTO } from "@/types/transfer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -22,7 +28,20 @@ export type OrderData = z.infer<typeof orderSchema>;
 const SearchPage: React.FC = () => {
   const searchParams = useDecodedSearchParams();
   const router = useRouter();
-
+  const [query, setQuery] = useState({
+    page: 1,
+    limit: 10,
+    originZoneId: searchParams?.booking?.originZoneId?._id || "",
+    destinationZoneId: searchParams?.booking?.destinationZoneId?._id || "",
+    pax: sumTotalFromObject(searchParams?.booking?.paxes) || 1,
+  });
+  const queryPath = useParseObjectToQueryUrl(query);
+  const {
+    data: items,
+    isFetching,
+    refetch,
+  } = useGetAvailablesTranfers(queryPath);
+  console.log(items);
   const { control } = useForm<OrderData>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
@@ -32,14 +51,21 @@ const SearchPage: React.FC = () => {
     },
   });
 
-  const handleClickCard = () => {
+  const handleClickCard = (vehicleSelected: VehicleDTO) => {
     console.log("Card clicked");
-    console.log(searchParams);
+    searchParams.booking.vehicle = vehicleSelected;
     const params = new URLSearchParams({
       booking: JSON.stringify(searchParams.booking),
     });
     router.push(`/book?${params.toString()}`);
   };
+
+  if (isFetching)
+    return (
+      <div className="flex justify-center mt-12">
+        <Spinner className="text-gray-500" />
+      </div>
+    );
 
   return (
     <div className="relative h-screen">
@@ -79,8 +105,13 @@ const SearchPage: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <TransferCard handleClickCard={handleClickCard} />
-              <TransferCard handleClickCard={handleClickCard} />
+              {items?.data.map((item: VehicleDTO) => (
+                <TransferCard
+                  key={item._id}
+                  handleClickCard={handleClickCard}
+                  vehicle={item}
+                />
+              ))}
             </div>
           </div>
         </div>

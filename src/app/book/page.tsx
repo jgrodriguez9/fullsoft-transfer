@@ -29,7 +29,7 @@ const Page: React.FC = () => {
 
   const searchParams = useDecodedSearchParams();
   const router = useRouter();
-
+  console.log(searchParams);
   const { mutate, isPending } = useMutation({
     mutationKey: ["createReservation"],
     mutationFn: createReservation,
