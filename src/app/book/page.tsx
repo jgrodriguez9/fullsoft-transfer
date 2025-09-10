@@ -2,13 +2,16 @@
 
 import InputController from "@/components/controllers/InputController";
 import PhoneController from "@/components/controllers/PhoneController";
+import ResumeDescription from "@/components/transfers/ResumeDescription";
+import ResumePayment from "@/components/transfers/ResumePayment";
 import { Button } from "@/components/ui/button";
 import { EMAIL_INVALID, FIELD_REQUIRED } from "@/constant/messages";
 import { useDecodedSearchParams } from "@/hooks/useDecodedSearchParams";
 import useSonner from "@/hooks/useSonner";
-import { createReservation } from "@/services/reservation";
+import { createTransferReservation } from "@/services/reservation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { se } from "date-fns/locale";
 import { Car, CarFront, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -29,13 +32,12 @@ const Page: React.FC = () => {
 
   const searchParams = useDecodedSearchParams();
   const router = useRouter();
-  console.log(searchParams);
   const { mutate, isPending } = useMutation({
-    mutationKey: ["createReservation"],
-    mutationFn: createReservation,
+    mutationKey: ["createTransferReservation"],
+    mutationFn: createTransferReservation,
     onSuccess: () => {
       // Maneja el éxito de la mutación, como redirigir o mostrar un mensaje
-      //router.push("/done");
+      router.push("/done");
     },
     onError: (error) => {
       // Maneja el error de la mutación, como mostrar un mensaje de error
@@ -47,6 +49,7 @@ const Page: React.FC = () => {
   const {
     control,
     register,
+    handleSubmit,
     formState: { errors },
   } = useForm<BookData>({
     resolver: zodResolver(bookSchema),
@@ -57,11 +60,27 @@ const Page: React.FC = () => {
     },
   });
 
-  const onHandleClickBook = () => {
-    //se envia peticion a reservacion y
-    // despues se redirige a done
-    mutate();
-  };
+  const onHandleClickBook = handleSubmit((data) => {
+    //console.log(data);
+    //console.log(searchParams);
+    const reservationData = {
+      originZoneId: searchParams.booking.originZoneId?._id,
+      destinationZoneId: searchParams.booking.destinationZoneId?._id,
+      vehicleType: searchParams.booking.vehicle._id,
+      date: searchParams.booking.date,
+      hour: searchParams.booking.hour,
+      price: searchParams.booking.vehicle.price,
+      paxes: searchParams.booking.paxes,
+      currency: searchParams.booking.vehicle.currency,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+    };
+    console.log(reservationData);
+    // Envía la petición de reservación solo si el formulario es válido
+    mutate(reservationData);
+    // Después se puede redirigir a done en onSuccess
+  });
 
   return (
     <div className="relative h-screen">
@@ -155,43 +174,20 @@ const Page: React.FC = () => {
           <div className="col-span-1 lg:col-span-3">
             <div className="flex flex-col gap-3">
               <hr className="border-t border-gray-200" />
-              <div className="flex flex-row gap-2">
-                <Car className="size-8" />
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold">Traslado exprés</span>
-                  <span className="text-xs text-gray-600">
-                    lun., 15 sept. - mié., 17 sept.
-                  </span>
-                  <span className="text-xs text-gray-600">
-                    Van compartida • 10 pasajeros • 2 maletas
-                  </span>
-                  <div className="mt-4 flex flex-col">
-                    <span className="text-xs text-gray-800 font-semibold">
-                      De Cancún, Quintana Roo (CUN-Aeropuerto Internacional de
-                      Cancún) a Cancun Bay Resort - All Inclusive
-                    </span>
-                    <span className="text-xs text-gray-600">
-                      lun., 15 sept. 10:30 a. m.
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <ResumeDescription
+                vehicle={searchParams.booking.vehicle}
+                date={searchParams.booking.date}
+                hour={searchParams.booking.hour}
+                origin={searchParams.booking.originZoneId?.name}
+                destination={searchParams.booking.destinationZoneId?.name}
+              />
+
               <hr className="border-t border-gray-200" />
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <span className="text-sm">Total a pagar</span>
-                  <span className="text-xs">2 Adultos</span>
-                  <span className="text-xs text-gray-600">
-                    Incluye impuestos y cargos
-                  </span>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-md text-gray-800 font-semibold">
-                    $44 USD
-                  </span>
-                  <span className="text-xs text-gray-800">$44 USD</span>
-                </div>
-              </div>
+
+              <ResumePayment
+                price={searchParams.booking.vehicle.price}
+                paxes={searchParams.booking.paxes}
+              />
             </div>
           </div>
         </div>

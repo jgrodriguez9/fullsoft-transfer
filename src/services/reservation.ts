@@ -1,8 +1,8 @@
 import { post } from "./api";
 
-const RESERVATION = "/reservations";
+const TRANSFER_RESERVATION = "/transfer-reservation";
 
-const createReservation = async (): Promise<any> =>
-  await post(`${RESERVATION}/send-email`);
+const createTransferReservation = async (data: any): Promise<any> =>
+  await post(`${TRANSFER_RESERVATION}`, data);
 
-export { createReservation };
+export { createTransferReservation };
