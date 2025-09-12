@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, User } from "lucide-react";
+import { Briefcase, GemIcon, User } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import Modal from "../common/Modal";
@@ -53,15 +53,21 @@ export default function TransferCard({
               <h2 className="mb-1 text-lg font-semibold tracking-tight">
                 {vehicle.name}
               </h2>
-              <ul className="mb-4 flex gap-6 items-center text-gray-700">
-                <li className="flex gap-1 items-center">
+              <ul className="mb-4 flex gap-8 items-center text-gray-700">
+                <li className="flex gap-3 items-center">
                   <User className="size-5 " />
                   <span className="text-sm">{vehicle.capacity}</span>
                 </li>
-                <li className="flex gap-1 items-center">
+                <li className="flex gap-3 items-center">
                   <Briefcase className="size-5" />
-                  <span className="text-sm">2</span>
+                  <span className="text-sm">{vehicle.bags}</span>
                 </li>
+                {vehicle.vehicleType === "luxury" && (
+                  <li className="flex gap-3 items-center">
+                    <GemIcon className="size-5 text-yellow-600" />
+                    <span className="text-sm text-yellow-600">Lujo</span>
+                  </li>
+                )}
               </ul>
             </div>
 
@@ -70,7 +76,7 @@ export default function TransferCard({
 
               <div className="flex flex-col items-end self-end">
                 <span className="text-xs text-muted-foreground">
-                  Precio por persona
+                  {vehicle.isShared ? "Precio por persona" : "Precio total"}
                 </span>
                 <span className="text-lg text-muted-foreground mr-2">
                   {formatNumber(vehicle.price)}
@@ -84,16 +90,16 @@ export default function TransferCard({
         </div>
       </div>
       <Modal isOpen={open} onClose={() => setOpen(false)}>
-        <h2 className="text-md  mb-8">
-          Traslado compartido desde el Aeropuerto de Cancún
-        </h2>
+        <h2 className="text-md  mb-8">{vehicle.name}</h2>
         <ul className="mb-8 list-disc space-y-2 pl-5 text-xs text-gray-700">
           {policies.map((policy, index) => (
             <li key={index}>{policy}</li>
           ))}
         </ul>
         <div className="flex justify-between items-center">
-          <span className="text-lg text-muted-foreground mr-2">$22</span>
+          <span className="text-lg text-muted-foreground mr-2">
+            {formatNumber(vehicle.price)}
+          </span>
           <Button
             variant={"default"}
             onClick={() => {

@@ -12,7 +12,7 @@ import { Loader2Icon } from "lucide-react";
 import ComboBoxController from "./controllers/SelectSimpleController";
 import DropdownPassengers from "./controllers/DropdownPassenger";
 import { Paxes } from "./controllers/dropdown/types";
-import { getZones } from "@/services/zone";
+import { getDestinies, getZones } from "@/services/zone";
 import { format, parseISO } from "date-fns";
 import { timeOptions } from "@/constant/time";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,9 @@ import { useRouter } from "next/navigation";
 const zoneSchema = z.object({
   _id: z.string().trim().min(1, FIELD_REQUIRED),
   name: z.string().optional(),
+  zone: z.object({
+    _id: z.string(),
+  }),
 });
 // ISO date (YYYY-MM-DD) validation
 const dateSchema = z.date(FIELD_REQUIRED);
@@ -100,6 +103,7 @@ export const BookingForm: React.FC<Props> = ({
       },
     },
   });
+  console.log(errors);
   return (
     <form className={className} onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -108,7 +112,7 @@ export const BookingForm: React.FC<Props> = ({
             name="originZoneId"
             label="Lugar recogida"
             control={control}
-            fnFilter={getZones}
+            fnFilter={getDestinies}
             query={"page=1&max=10"}
             value={
               defaultInitial?.originZoneId
@@ -126,7 +130,7 @@ export const BookingForm: React.FC<Props> = ({
             name="destinationZoneId"
             label="Lugar destino"
             control={control} // Replace with actual control from react-hook-form
-            fnFilter={getZones}
+            fnFilter={getDestinies}
             query={"page=1&max=10"}
             error={errors.destinationZoneId?._id?.message}
             value={

@@ -26,3 +26,8 @@ export interface ZoneList {
   page: number;
   pages: number;
 }
+
+export interface Pagination {
+  pageIndex: number;
+  pageSize: number;
+}

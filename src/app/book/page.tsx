@@ -2,17 +2,17 @@
 
 import InputController from "@/components/controllers/InputController";
 import PhoneController from "@/components/controllers/PhoneController";
+import BannerReminder from "@/components/transfers/BannerReminder";
 import ResumeDescription from "@/components/transfers/ResumeDescription";
 import ResumePayment from "@/components/transfers/ResumePayment";
 import { Button } from "@/components/ui/button";
 import { EMAIL_INVALID, FIELD_REQUIRED } from "@/constant/messages";
 import { useDecodedSearchParams } from "@/hooks/useDecodedSearchParams";
 import useSonner from "@/hooks/useSonner";
+import { parseDate } from "@/libs/dates";
 import { createTransferReservation } from "@/services/reservation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { se } from "date-fns/locale";
-import { Car, CarFront, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -31,6 +31,7 @@ const Page: React.FC = () => {
   const sonner = useSonner();
 
   const searchParams = useDecodedSearchParams();
+  console.log(searchParams);
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationKey: ["createTransferReservation"],
@@ -63,14 +64,18 @@ const Page: React.FC = () => {
   const onHandleClickBook = handleSubmit((data) => {
     //console.log(data);
     //console.log(searchParams);
+    const { paxes } = searchParams.booking;
+    const { price } = searchParams.booking.vehicle;
     const reservationData = {
       originZoneId: searchParams.booking.originZoneId?._id,
       destinationZoneId: searchParams.booking.destinationZoneId?._id,
-      vehicleType: searchParams.booking.vehicle._id,
+      vehicle: searchParams.booking.vehicle._id,
       date: searchParams.booking.date,
       hour: searchParams.booking.hour,
-      price: searchParams.booking.vehicle.price,
-      paxes: searchParams.booking.paxes,
+      price: searchParams.booking.vehicle.isShared
+        ? price * (paxes.adults + (paxes.children || 0))
+        : price,
+      paxes: paxes,
       currency: searchParams.booking.vehicle.currency,
       name: data.name,
       email: data.email,
@@ -92,13 +97,7 @@ const Page: React.FC = () => {
           <div className="col-span-1 lg:col-span-4">
             <div className="flex flex-col gap-3">
               <div className="rounded-lg border border-gray-200 bg-background p-3  md:flex md:gap-6">
-                <span className="flex gap-2 text-red-400 items-center">
-                  <Clock className="size-5" />
-                  <p className="text-sm">
-                    Tu viaje comienza en 10 días. Reserva ahora, mientras hay
-                    disponibilidad.
-                  </p>
-                </span>
+                <BannerReminder dateReservation={searchParams.booking.date} />
               </div>
               <div className="rounded-lg border border-gray-200 bg-background p-3 py-6 md:gap-6">
                 <div className="flex flex-col gap-4">
@@ -133,8 +132,14 @@ const Page: React.FC = () => {
                     Información importante sobre el traslado
                   </h2>
                   <h3 className="text-sm">
-                    Traslado exprés: Aeropuerto de Cancún (CUN) (Cancun, Mexico)
-                    - lun., 15 sept.
+                    {searchParams?.booking?.vehicle?.name ?? "Traslado"}:{" "}
+                    {searchParams?.booking?.originZoneId?.name}-{" "}
+                    {parseDate(
+                      searchParams?.booking?.date,
+                      "yyyy-MM-dd",
+                      "EEE, d MMM"
+                    )}
+                    .
                   </h3>
                   <ul className="list-disc flex flex-col ml-2 pl-5 text-xs gap-2 text-gray-600">
                     <li>
@@ -187,6 +192,7 @@ const Page: React.FC = () => {
               <ResumePayment
                 price={searchParams.booking.vehicle.price}
                 paxes={searchParams.booking.paxes}
+                isShared={searchParams.booking.vehicle.isShared}
               />
             </div>
           </div>

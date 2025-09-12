@@ -23,7 +23,7 @@ const ResumeDescription: React.FC<Props> = ({
       <div className="flex flex-col">
         <span className="text-sm font-semibold">{vehicle.name}</span>
         <span className="text-xs text-gray-600">
-          {parseDate(date, "EEE, d MMM")}
+          {parseDate(date, "yyyy-MM-dd", "EEE, d MMM")}
         </span>
         <span className="text-xs text-gray-600">
           Van compartida • {vehicle.capacity} pasajeros • 2 maletas
@@ -33,7 +33,7 @@ const ResumeDescription: React.FC<Props> = ({
             {origin} a {destination}
           </span>
           <span className="text-xs text-gray-600 lowercase">
-            {parseDate(date, "EEE, d MMM")} {hour}
+            {parseDate(date, "yyyy-MM-dd", "EEE, d MMM")} {hour}
           </span>
         </div>
       </div>

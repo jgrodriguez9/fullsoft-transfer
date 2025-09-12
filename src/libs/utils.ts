@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import lzString from "lz-string";
+import { Paxes } from "@/components/controllers/dropdown/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -77,4 +78,8 @@ export const extractMeaningfulMessage = (error: any, message: string) => {
 export const sumTotalFromObject = <T extends object>(items: T): number => {
   const total = Object.values(items).reduce((sum, count) => sum + count, 0);
   return total;
+};
+
+export const sumTotalPaxes = (items: Paxes): number => {
+  return items.adults + items.children;
 };

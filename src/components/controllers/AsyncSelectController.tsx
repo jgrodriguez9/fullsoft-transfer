@@ -78,6 +78,7 @@ const AsyncSelectController: FC<Props> = ({
   const timer = useRef<NodeJS.Timeout | null>(null);
   const { field } = useController({ name, control });
   const handleChangeVal = (val: SingleValue<SelectOption>) => {
+    console.log(val);
     if (val) {
       field.onChange(val);
     } else {
