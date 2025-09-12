@@ -1,4 +1,4 @@
-import { differenceInDays, format, parse } from "date-fns";
+import { differenceInDays, format, parse, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 
 export const parseDate = (
@@ -16,8 +16,8 @@ export const parseDate = (
 };
 
 export const diffInDays = (tDate: string): number => {
-  const today = new Date();
-  const targetDate = new Date(tDate); // format "yyyy-MM-dd"
+  const today = parseISO(new Date().toISOString()); // ensures consistent parsing
+  const targetDate = parseISO(tDate);
   const daysBetween = differenceInDays(targetDate, today);
   return daysBetween;
 };
