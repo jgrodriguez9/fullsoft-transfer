@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
 import Header from "@/components/common/Header";
 import { Toaster } from "sonner";
+import Footer from "@/components/common/Footer";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ export default function RootLayout({
           <QueryClientProvider client={queryClient}>
             <Header />
             {children}
+            <Footer />
             <Toaster
               richColors
               position="top-center"
