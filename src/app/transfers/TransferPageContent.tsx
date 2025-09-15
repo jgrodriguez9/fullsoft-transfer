@@ -38,10 +38,12 @@ const TransferPageContent: React.FC = () => {
     destinationZoneId:
       searchParams?.booking?.destinationZoneId?.zone?._id || "",
     pax: sumTotalPaxes(searchParams?.booking?.paxes) || 1,
+    date: searchParams?.booking?.date ?? "",
+    time: searchParams?.booking?.hour ?? "",
   });
   const queryPath = useParseObjectToQueryUrl(query);
   const { data: items, isFetching } = useGetAvailablesTranfers(queryPath);
-  //console.log(items);
+
   const { control } = useForm<OrderData>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
@@ -52,7 +54,6 @@ const TransferPageContent: React.FC = () => {
   });
   const hasMounted = useRef(false);
   const formValues = useWatch({ control });
-
   useEffect(() => {
     if (!hasMounted.current) {
       hasMounted.current = true;
@@ -68,13 +69,15 @@ const TransferPageContent: React.FC = () => {
     setQuery({
       page: 1,
       limit: 10,
-      originZoneId: query.originZoneId,
-      destinationZoneId: query.destinationZoneId,
-      pax: query.pax,
+      originZoneId: searchParams?.booking?.originZoneId?.zone?._id,
+      destinationZoneId: searchParams?.booking?.destinationZoneId?.zone?._id,
+      date: searchParams?.booking.date,
+      time: searchParams?.booking.hour,
+      pax: searchParams?.booking.pax,
       shared,
       sort: formValues.order === "" ? undefined : formValues.order,
     });
-  }, [formValues]);
+  }, [formValues, searchParams]);
 
   const handleClickCard = (vehicleSelected: VehicleDTO) => {
     searchParams.booking.vehicle = vehicleSelected;
@@ -121,38 +124,46 @@ const TransferPageContent: React.FC = () => {
               />
             </div>
           </div>
-          <div className="col-span-1 lg:col-span-5">
-            <div className="mb-3 flex justify-between items-end">
-              <h3 className="text-sm">
-                {items?.total ?? ""} resultados • El total incluye impuestos y
-                cargos
-              </h3>
-              <div>
-                <ComboBoxController
-                  name="order"
-                  label="Ordenar por"
-                  control={control}
-                  options={sortOptions}
-                  placeholder="Selecionar opción"
-                  isClearable
+          {items.total === 0 ? (
+            <div className="col-span-1 lg:col-span-5">
+              <p className="text-sm text-center">
+                No hay resultados que mostrar
+              </p>
+            </div>
+          ) : (
+            <div className="col-span-1 lg:col-span-5">
+              <div className="mb-3 flex justify-between items-end">
+                <h3 className="text-sm">
+                  {items?.total ?? ""} resultados • El total incluye impuestos y
+                  cargos
+                </h3>
+                <div>
+                  <ComboBoxController
+                    name="order"
+                    label="Ordenar por"
+                    control={control}
+                    options={sortOptions}
+                    placeholder="Selecionar opción"
+                    isClearable
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-3">
+                {items?.data.map((item: VehicleDTO) => (
+                  <TransferCard
+                    key={item._id}
+                    handleClickCard={handleClickCard}
+                    vehicle={item}
+                  />
+                ))}
+                <Pagination
+                  handleChangePagination={handleChangePagination}
+                  pageIndex={items?.page ?? 1}
+                  pageSize={items?.pages ?? 1}
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-3">
-              {items?.data.map((item: VehicleDTO) => (
-                <TransferCard
-                  key={item._id}
-                  handleClickCard={handleClickCard}
-                  vehicle={item}
-                />
-              ))}
-              <Pagination
-                handleChangePagination={handleChangePagination}
-                pageIndex={items?.page ?? 1}
-                pageSize={items?.pages ?? 1}
-              />
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

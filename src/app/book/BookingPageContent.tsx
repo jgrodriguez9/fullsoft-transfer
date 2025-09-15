@@ -80,7 +80,6 @@ const BookingPageContent: React.FC = () => {
       email: data.email,
       phone: data.phone,
     };
-    console.log(reservationData);
     // Envía la petición de reservación solo si el formulario es válido
     mutate(reservationData);
     // Después se puede redirigir a done en onSuccess

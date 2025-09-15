@@ -38,9 +38,11 @@ const ResumePayment: React.FC<Props> = ({ price, paxes, isShared }) => {
             {`${paxes.children} ${paxes.children === 1 ? "Niño" : "Niños"}`}{" "}
           </span>
         )}
-        <span className="text-xs">
-          {`${paxes.infant} ${paxes.infant === 1 ? "Infante" : "Infantes"}`}{" "}
-        </span>
+        {paxes.infant > 0 && (
+          <span className="text-xs">
+            {`${paxes.infant} ${paxes.infant === 1 ? "Infante" : "Infantes"}`}{" "}
+          </span>
+        )}
         <span className="text-xs text-gray-600">
           Incluye impuestos y cargos
         </span>
@@ -59,9 +61,11 @@ const ResumePayment: React.FC<Props> = ({ price, paxes, isShared }) => {
                 {formatNumber(totalChildren)} USD
               </span>
             )}
-            <span className="text-xs text-gray-800">
-              {formatNumber(totalInfant)} USD
-            </span>
+            {paxes.infant > 0 && (
+              <span className="text-xs text-gray-800">
+                {formatNumber(totalInfant)} USD
+              </span>
+            )}
           </div>
         )}
       </div>

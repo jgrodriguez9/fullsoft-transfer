@@ -80,6 +80,7 @@ export const BookingForm: React.FC<Props> = ({
     const params = new URLSearchParams({ booking: JSON.stringify(data) });
     router.push(`/transfers?${params.toString()}`);
   };
+  //console.log(defaultInitial);
   const {
     handleSubmit,
     control,
@@ -88,12 +89,8 @@ export const BookingForm: React.FC<Props> = ({
   } = useForm<TransferFormData>({
     resolver: zodResolver(transferSchema),
     defaultValues: {
-      originZoneId: {
-        _id: defaultInitial?.originZoneId?._id || "",
-      },
-      destinationZoneId: {
-        _id: defaultInitial?.destinationZoneId?._id || "",
-      },
+      originZoneId: defaultInitial?.originZoneId ?? "",
+      destinationZoneId: defaultInitial?.destinationZoneId ?? "",
       date: defaultInitial?.date ? parseISO(defaultInitial.date) : new Date(),
       hour: defaultInitial?.hour ?? "10:30 AM",
       paxes: defaultInitial?.paxes || {

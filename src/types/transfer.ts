@@ -23,4 +23,6 @@ export interface QueryDTO {
   shared?: boolean;
   vehicleType?: string;
   sort?: string;
+  date: string;
+  time: string;
 }
