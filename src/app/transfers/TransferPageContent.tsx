@@ -103,7 +103,7 @@ const TransferPageContent: React.FC = () => {
     );
 
   return (
-    <div className="relative h-screen">
+    <div>
       <div className="mt-4 lg:mt-8 flex flex-col gap-14 justify-center max-w-5xl mx-auto pb-4 lg:pb-12 px-4 lg:px-0">
         <BookingForm className="w-full" defaultInitial={searchParams.booking} />
 

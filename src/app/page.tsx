@@ -6,7 +6,7 @@ import OurTours from "@/components/home/OurTours";
 const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col">
-      <section className="relative h-screen">
+      <section className="">
         <div className="absolute inset-0">
           <img
             src="bg-home.jpg"

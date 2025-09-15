@@ -23,9 +23,13 @@ export default function RootLayout({
       <body>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
-            <Header />
-            {children}
-            <Footer />
+            <div className="flex flex-col">
+              <Header />
+              <div className="flex-1">{children}</div>
+
+              <Footer />
+            </div>
+
             <Toaster
               richColors
               position="top-center"

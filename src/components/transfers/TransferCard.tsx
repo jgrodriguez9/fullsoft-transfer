@@ -72,7 +72,7 @@ export default function TransferCard({
             </div>
 
             <div className="flex justify-between items-start">
-              <p className="text-sm">Cancelación gratuita hasta el 14 sept.</p>
+              <p className="text-sm">Cancelación gratuita.</p>
 
               <div className="flex flex-col items-end self-end">
                 <span className="text-xs text-muted-foreground">

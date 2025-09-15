@@ -3,6 +3,7 @@
 import InputController from "@/components/controllers/InputController";
 import PhoneController from "@/components/controllers/PhoneController";
 import BannerReminder from "@/components/transfers/BannerReminder";
+import CardCompleteReservation from "@/components/transfers/CardCompleteReservation";
 import ResumeDescription from "@/components/transfers/ResumeDescription";
 import ResumePayment from "@/components/transfers/ResumePayment";
 import { Button } from "@/components/ui/button";
@@ -86,7 +87,7 @@ const BookingPageContent: React.FC = () => {
   });
 
   return (
-    <div className="relative h-screen">
+    <div>
       <div className="mt-4 p-4 lg:px-0 lg:mt-8 flex flex-col gap-14 justify-center max-w-5xl mx-auto">
         <h1 className="text-2xl font-semibold">
           Asegura tu reservación. ¡Solo te toma 2 minutos!
@@ -152,26 +153,11 @@ const BookingPageContent: React.FC = () => {
                   </ul>
                 </div>
               </div>
-              <div className="rounded-lg border border-gray-200 bg-background p-3 py-6 md:gap-6">
-                <div className="flex flex-col gap-4">
-                  <h4 className="text-xs text-gray-600">
-                    Al hacer clic en el botón de abajo, acepto que revisé el
-                    Aviso de privacidad Se abrirá en una nueva ventana. y las
-                    Alertas de viaje del gobierno Se abrirá en una nueva
-                    ventana.. También acepto que revisé y estoy de acuerdo con
-                    las Normas y restricciones Se abrirá en una nueva ventana.,
-                    y los Términos de uso Se abrirá en una nueva ventana..
-                  </h4>
-                  <Button
-                    className="w-full lg:w-1/2"
-                    size="lg"
-                    onClick={onHandleClickBook}
-                    loading={isPending}
-                  >
-                    Completar reservación
-                  </Button>
-                </div>
-              </div>
+              <CardCompleteReservation
+                onClick={onHandleClickBook}
+                isPending={isPending}
+                className="hidden lg:block"
+              />
             </div>
           </div>
           <div className="col-span-1 lg:col-span-3">
@@ -194,6 +180,11 @@ const BookingPageContent: React.FC = () => {
               />
             </div>
           </div>
+          <CardCompleteReservation
+            onClick={onHandleClickBook}
+            isPending={isPending}
+            className="lg:hidden"
+          />
         </div>
       </div>
     </div>
