@@ -53,7 +53,7 @@ const MenuContentPaxes: React.FC<MenuContentProps> = ({
           <PaxCounter
             type="ADULT"
             min={1}
-            max={5}
+            max={10}
             guests={paxes.adults}
             setGuests={(value) => {
               handlePaxesChange(value, "ADULT");
@@ -63,7 +63,7 @@ const MenuContentPaxes: React.FC<MenuContentProps> = ({
           <PaxCounter
             type="CHILD"
             min={0}
-            max={5}
+            max={6}
             guests={paxes.children}
             setGuests={(value) => {
               handlePaxesChange(value, "CHILD");
