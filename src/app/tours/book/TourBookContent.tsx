@@ -2,15 +2,17 @@
 
 import InputController from "@/components/controllers/InputController";
 import PhoneController from "@/components/controllers/PhoneController";
+import TourResumeDescription from "@/components/tour/TourResumeDescription";
 import BannerReminder from "@/components/transfers/BannerReminder";
 import CardCompleteReservation from "@/components/transfers/CardCompleteReservation";
-import ResumeDescription from "@/components/transfers/ResumeDescription";
 import ResumePayment from "@/components/transfers/ResumePayment";
+import { Spinner } from "@/components/ui/spinner";
 import { EMAIL_INVALID, FIELD_REQUIRED } from "@/constant/messages";
+import useGetToursById from "@/hooks/query/useGetToursById";
 import { useDecodedSearchParams } from "@/hooks/useDecodedSearchParams";
 import useSonner from "@/hooks/useSonner";
-import { parseDate } from "@/libs/dates";
-import { createTransferReservation } from "@/services/reservation";
+import { formatTime24To12, parseDate } from "@/libs/dates";
+import { createTourReservation } from "@/services/tours";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -27,14 +29,17 @@ const bookSchema = z
 
 export type BookData = z.infer<typeof bookSchema>;
 
-const BookingPageContent: React.FC = () => {
+const TourBookContent: React.FC = () => {
   const sonner = useSonner();
 
   const searchParams = useDecodedSearchParams();
   const router = useRouter();
+  const { data: tour, isFetching } = useGetToursById(
+    searchParams.booking.tourId
+  );
   const { mutate, isPending } = useMutation({
     mutationKey: ["createTransferReservation"],
-    mutationFn: createTransferReservation,
+    mutationFn: createTourReservation,
     onSuccess: () => {
       // Maneja el éxito de la mutación, como redirigir o mostrar un mensaje
       router.push("/done");
@@ -63,27 +68,35 @@ const BookingPageContent: React.FC = () => {
   const onHandleClickBook = handleSubmit((data) => {
     //console.log(data);
     //console.log(searchParams);
-    const { paxes } = searchParams.booking;
-    const { price } = searchParams.booking.vehicle;
+    const { paxes, time, language } = searchParams.booking.detail;
+    const { price, _id } = tour;
     const reservationData = {
-      originZoneId: searchParams.booking.originZoneId?._id,
-      destinationZoneId: searchParams.booking.destinationZoneId?._id,
-      vehicle: searchParams.booking.vehicle._id,
+      destiny: tour.destiny,
       date: searchParams.booking.date,
-      hour: searchParams.booking.hour,
-      price: searchParams.booking.vehicle.isShared
+      activity: _id,
+      price: tour.isShared
         ? price * (paxes.adults + (paxes.children || 0))
         : price,
       paxes: paxes,
-      currency: searchParams.booking.vehicle.currency,
+      currency: "USD",
+      time: time,
+      language: language,
       name: data.name,
       email: data.email,
       phone: data.phone,
     };
+    console.log(reservationData);
     // Envía la petición de reservación solo si el formulario es válido
     mutate(reservationData);
     // Después se puede redirigir a done en onSuccess
   });
+  console.log(tour);
+  if (isFetching)
+    return (
+      <div className="flex justify-center mt-12">
+        <Spinner className="text-gray-500" />
+      </div>
+    );
 
   return (
     <div>
@@ -127,17 +140,16 @@ const BookingPageContent: React.FC = () => {
               <div className="rounded-lg border border-gray-200 bg-background p-3 py-6 md:gap-6">
                 <div className="flex flex-col gap-4">
                   <h2 className="text-lg font-semibold">
-                    Información importante sobre el traslado
+                    Información importante sobre la actividad
                   </h2>
                   <h3 className="text-sm">
-                    {searchParams?.booking?.vehicle?.name ?? "Traslado"}:{" "}
-                    {searchParams?.booking?.originZoneId?.name}-{" "}
+                    {tour?.name ?? "Actividad"}:{" "}
                     {parseDate(
                       searchParams?.booking?.date,
                       "yyyy-MM-dd",
                       "EEE, d MMM"
-                    )}
-                    .
+                    )}{" "}
+                    {formatTime24To12(searchParams.booking.detail.time)}.
                   </h3>
                   <ul className="list-disc flex flex-col ml-2 pl-5 text-xs gap-2 text-gray-600">
                     <li>
@@ -162,20 +174,18 @@ const BookingPageContent: React.FC = () => {
           <div className="col-span-1 lg:col-span-3">
             <div className="flex flex-col gap-3">
               <hr className="border-t border-gray-200" />
-              <ResumeDescription
-                vehicle={searchParams.booking.vehicle}
+              <TourResumeDescription
+                tour={tour}
                 date={searchParams.booking.date}
-                hour={searchParams.booking.hour}
-                origin={searchParams.booking.originZoneId?.name}
-                destination={searchParams.booking.destinationZoneId?.name}
+                hour={formatTime24To12(searchParams.booking.detail.time)}
               />
 
               <hr className="border-t border-gray-200" />
 
               <ResumePayment
-                price={searchParams.booking.vehicle.price}
-                paxes={searchParams.booking.paxes}
-                isShared={searchParams.booking.vehicle.isShared}
+                price={tour.price}
+                paxes={searchParams.booking.detail.paxes}
+                isShared={tour.isShared}
               />
             </div>
           </div>
@@ -190,4 +200,4 @@ const BookingPageContent: React.FC = () => {
   );
 };
 
-export default BookingPageContent;
+export default TourBookContent;

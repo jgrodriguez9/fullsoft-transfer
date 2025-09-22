@@ -2,7 +2,7 @@ import { Car, HandHeart } from "lucide-react";
 
 const OurTours = () => {
   return (
-    <section className="bg-gray-100 py-16">
+    <section className="py-16">
       <div className="container mx-auto px-4 ">
         <h2 className="text-3xl font-bold text-primary mb-6 text-center">
           Tours exclusivos

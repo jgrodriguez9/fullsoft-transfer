@@ -21,3 +21,10 @@ export const diffInDays = (tDate: string): number => {
   const daysBetween = differenceInDays(targetDate, today);
   return daysBetween;
 };
+
+export const formatTime24To12 = (time: string): string => {
+  const [hours, minutes] = time.split(":").map(Number);
+  const suffix = hours >= 12 ? "PM" : "AM";
+  const hour12 = hours % 12 === 0 ? 12 : hours % 12;
+  return `${hour12}:${minutes.toString().padStart(2, "0")} ${suffix}`;
+};

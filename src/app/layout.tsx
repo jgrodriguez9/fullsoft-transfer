@@ -23,7 +23,7 @@ export default function RootLayout({
       <body>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
-            <div className="flex flex-col">
+            <div className="flex flex-col h-screen">
               <Header />
               <div className="flex-1">{children}</div>
 

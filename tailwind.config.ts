@@ -12,5 +12,5 @@ module.exports = {
     respectDefaultRingColorOpacity: true,
     disableColorOpacityUtilitiesByDefault: true,
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };

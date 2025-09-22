@@ -100,7 +100,6 @@ export const BookingForm: React.FC<Props> = ({
       },
     },
   });
-  console.log(errors);
   return (
     <form className={className} onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
