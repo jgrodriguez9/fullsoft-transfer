@@ -9,15 +9,7 @@ import { useDecodedSearchParams } from "@/hooks/useDecodedSearchParams";
 import { parseDate } from "@/libs/dates";
 import formatNumber from "@/libs/formatNumber";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Calendar,
-  Check,
-  Clock,
-  Map,
-  MapPin,
-  TicketCheck,
-  X,
-} from "lucide-react";
+import { Calendar, Check, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -37,7 +29,6 @@ export type BookData = z.infer<typeof schema>;
 
 const HotelDetailPageContent: React.FC = () => {
   const searchParams = useDecodedSearchParams();
-  console.log(searchParams);
   const router = useRouter();
   const [paxes, setPaxes] = useState<Paxes>({
     adults: 1,
@@ -48,7 +39,6 @@ const HotelDetailPageContent: React.FC = () => {
     searchParams.booking.hotelId,
     searchParams.booking.date
   );
-  console.log(item);
 
   const images = useMemo(() => {
     if (!item) return [];
@@ -66,12 +56,7 @@ const HotelDetailPageContent: React.FC = () => {
     return resultImages;
   }, [item]);
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<BookData>({
+  const { handleSubmit, setValue } = useForm<BookData>({
     resolver: zodResolver(schema),
     defaultValues: {
       paxes: {
@@ -145,7 +130,7 @@ const HotelDetailPageContent: React.FC = () => {
     const params = new URLSearchParams({
       booking: JSON.stringify(searchParams.booking),
     });
-    router.push(`/hotel/book?${params.toString()}`);
+    router.push(`/daypass/book?${params.toString()}`);
   });
 
   if (isFetching)
