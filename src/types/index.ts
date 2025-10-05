@@ -14,6 +14,10 @@ export interface SelectOption {
   value: string;
   label: string;
 }
+
+export interface CityOption extends SelectOption {
+  stateCode: string;
+}
 export interface ZoneTable {
   _id: string;
   name: string;

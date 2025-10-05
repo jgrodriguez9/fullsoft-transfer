@@ -3,8 +3,9 @@ import { BookingForm } from "@/components/BookingForm";
 import OurServices from "@/components/home/OurServices";
 import OurTours from "@/components/home/OurTours";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Car, Tickets } from "lucide-react";
+import { Car, Hotel, Tickets } from "lucide-react";
 import { TourBookingForm } from "@/components/tour/TourBookingForm";
+import { HotelsBookingForm } from "@/components/daypass/HotelsBookingForm";
 
 const HomePage: React.FC = () => {
   return (
@@ -32,6 +33,15 @@ const HomePage: React.FC = () => {
               <span>Actividades</span>
             </div>
           </TabsTrigger>
+          <TabsTrigger
+            value="hotels"
+            className="!bg-transparent border-0 !shadow-none"
+          >
+            <div className="flex flex-col gap-1 items-center justify-center">
+              <Hotel className="size-12" />
+              <span>DayPass</span>
+            </div>
+          </TabsTrigger>
         </TabsList>
         <div className="pt-12">
           <TabsContent value="transfer">
@@ -39,6 +49,9 @@ const HomePage: React.FC = () => {
           </TabsContent>
           <TabsContent value="tours">
             <TourBookingForm className="" />
+          </TabsContent>
+          <TabsContent value="hotels">
+            <HotelsBookingForm className="" />
           </TabsContent>
         </div>
       </Tabs>
