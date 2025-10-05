@@ -74,7 +74,7 @@ export default function HotelCard({ handleClickCard, hotel }: Props) {
                         handleClickCard(hotel._id);
                       }}
                     >
-                      Reservar
+                      Seleccionar
                       <ChevronRight />
                     </Button>
                   </div>

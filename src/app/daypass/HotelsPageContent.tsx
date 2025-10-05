@@ -63,7 +63,7 @@ const HotelsPageContent: React.FC = () => {
   }, [formValues, searchParams]);
 
   const handleClickCard = (id: string) => {
-    searchParams.booking.tourId = id;
+    searchParams.booking.hotelId = id;
     const params = new URLSearchParams({
       booking: JSON.stringify(searchParams.booking),
     });
