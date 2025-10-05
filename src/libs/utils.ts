@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import lzString from "lz-string";
 import { Paxes } from "@/components/controllers/dropdown/types";
+import { citiesMexicoOptions } from "@/constant/cities";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -24,7 +25,7 @@ export const decode = (str: string): any | null => {
 
       return param;
     }
-  } catch (err) {}
+  } catch (err) { }
 
   return str;
 };
@@ -82,4 +83,8 @@ export const sumTotalFromObject = <T extends object>(items: T): number => {
 
 export const sumTotalPaxes = (items: Paxes): number => {
   return items.adults + items.children;
+};
+
+export const getCityName = (city: string): string => {
+  return citiesMexicoOptions.find((c) => c.value === city)?.label || city;
 };
