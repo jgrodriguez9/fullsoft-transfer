@@ -23,22 +23,33 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  CardElement,
+  Elements,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 
 const bookSchema = z
   .object({
     name: z.string().trim().min(1, FIELD_REQUIRED),
     phone: z.string().trim().min(1, FIELD_REQUIRED),
     email: z.email(EMAIL_INVALID),
+    cardName: z.string().trim().min(1, FIELD_REQUIRED),
   })
   .strict();
 
 export type BookData = z.infer<typeof bookSchema>;
 
-const HotelBookContent: React.FC = () => {
+const HotelBookContentForm: React.FC = () => {
+  const stripe = useStripe();
+  const elements = useElements();
   const sonner = useSonner();
 
   const searchParams = useDecodedSearchParams();
-  console.log(searchParams);
   const router = useRouter();
   const { data: hotel, isFetching } = useGetHotelById(
     searchParams.booking.hotelId,
@@ -72,9 +83,23 @@ const HotelBookContent: React.FC = () => {
     },
   });
 
-  const onHandleClickBook = handleSubmit((data) => {
+  const onHandleClickBook = handleSubmit(async (data) => {
     //console.log(data);
     //console.log(searchParams);
+    if (!stripe || !elements) return;
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
+      type: "card",
+      card: elements.getElement(CardElement)!,
+      billing_details: {
+        name: data.cardName,
+        email: data.email,
+      },
+    });
+    if (error) {
+      sonner.simpleError(error.message);
+      return;
+    }
+
     const { paxes } = searchParams.booking.detail;
     const { adult, child, infant } = hotel.rate.prices;
     const reservationData = {
@@ -87,6 +112,7 @@ const HotelBookContent: React.FC = () => {
       name: data.name,
       email: data.email,
       phone: data.phone,
+      paymentMethodId: paymentMethod.id,
     };
     console.log(reservationData);
     //console.log(reservationData);
@@ -94,7 +120,6 @@ const HotelBookContent: React.FC = () => {
     mutate(reservationData);
     // Después se puede redirigir a done en onSuccess
   });
-  console.log(hotel);
 
   const needToKnowOptions = useMemo(() => {
     if (!hotel) return [];
@@ -163,6 +188,25 @@ const HotelBookContent: React.FC = () => {
               </div>
               <div className="rounded-lg border border-gray-200 bg-background p-3 py-6 md:gap-6">
                 <div className="flex flex-col gap-4">
+                  <div className="flex flex-col">
+                    <h2 className="text-lg font-semibold">Detalles del pago</h2>
+                    <p className="text-xs text-gray-600">
+                      Transacciones seguras. Tu información personal está
+                      protegida.
+                    </p>
+                  </div>
+                  <InputController
+                    label="Nombre que figura en la tarjeta"
+                    type="text"
+                    className="w-full lg:w-2/3"
+                    error={errors.cardName?.message}
+                    {...register("cardName")}
+                  />
+                  <CardElement className="p-2 border rounded-md" />
+                </div>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-background p-3 py-6 md:gap-6">
+                <div className="flex flex-col gap-4">
                   <h2 className="text-lg font-semibold">
                     Información importante sobre su reserva
                   </h2>
@@ -214,5 +258,13 @@ const HotelBookContent: React.FC = () => {
     </div>
   );
 };
+
+function HotelBookContent() {
+  return (
+    <Elements stripe={stripePromise}>
+      <HotelBookContentForm />
+    </Elements>
+  );
+}
 
 export default HotelBookContent;
