@@ -15,6 +15,7 @@ import useGetToursById from "@/hooks/query/useGetToursById";
 import { useDecodedSearchParams } from "@/hooks/useDecodedSearchParams";
 import useSonner from "@/hooks/useSonner";
 import { formatTime24To12, parseDate } from "@/libs/dates";
+import { createHotelDayPassReservation } from "@/services/daypass";
 import { createTourReservation } from "@/services/tours";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -44,8 +45,8 @@ const HotelBookContent: React.FC = () => {
     searchParams.booking.date
   );
   const { mutate, isPending } = useMutation({
-    mutationKey: ["createTransferReservation"],
-    mutationFn: createTourReservation,
+    mutationKey: ["createHotelDayPassReservation"],
+    mutationFn: createHotelDayPassReservation,
     onSuccess: () => {
       // Maneja el éxito de la mutación, como redirigir o mostrar un mensaje
       router.push("/done");
@@ -87,26 +88,10 @@ const HotelBookContent: React.FC = () => {
       email: data.email,
       phone: data.phone,
     };
-    mutate(reservationData);
-    /* const { price, _id } = tour;
-    const reservationData = {
-      destiny: tour.destiny,
-      date: searchParams.booking.date,
-      activity: _id,
-      price: tour.isShared
-        ? price * (paxes.adults + (paxes.children || 0))
-        : price,
-      paxes: paxes,
-      currency: "USD",
-      time: time,
-      language: language,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-    }; */
+    console.log(reservationData);
     //console.log(reservationData);
     // Envía la petición de reservación solo si el formulario es válido
-    // mutate(reservationData);
+    mutate(reservationData);
     // Después se puede redirigir a done en onSuccess
   });
   console.log(hotel);
